@@ -1,13 +1,6 @@
 --Apaga tables anteriores
 DROP TABLE IF EXISTS mtz CASCADE;
 
---Cria tables novas
-CREATE TABLE mtz(
-    valor float[][]);
-
---Preenche tabelas
-INSERT INTO mtz (valor) VALUES (ARRAY[ [1,2,3], [4,5,6], [7,8,9] ]);
-
 --Funcao que apaga linha e coluna
 CREATE OR REPLACE FUNCTION apagaColLin(j int, i int, m float[][]) RETURNS float[][] AS $$
     DECLARE
@@ -40,25 +33,28 @@ LANGUAGE PLPGSQL;
 DROP FUNCTION IF EXISTS determinante(m float[][]) CASCADE;
 CREATE OR REPLACE FUNCTION determinante(m float[][]) RETURNS float AS $$
     DECLARE
-        totalLin integer;
+        x integer;
         totalCol integer;
         det float;
     BEGIN
-        SELECT array_length(m, 1) INTO totalLin;
         SELECT array_length(m, 2) INTO totalCol;
+        x=1;
         det = 0;
 
-        IF totalLin = 1 THEN
-            RETURN m[1][1];
-        ELSE
-            FOR j in 1.. totalCol LOOP
-                det := m[1][j] * (power(-1, 1+j) * determinante(apagaColLin(1,j, m.valor))) ;
+        IF totalCol > 0 THEN
+            FOR y IN 1..totalCol LOOP
+                IF ((x + y)%2 = 1) THEN
+                    det := det + (m[x][y] * (-1) * determinante(apagaColLin(x, y, m)));
+                ELSE
+                    det := det + (m[x][y] * determinante(apagaColLin(x, y, m)));
+                END IF;
             END LOOP;
-
-            RETURN det;
+        ELSE
+            det := 1;
         END IF;
+        RETURN det;
     END;
 $$
 LANGUAGE PLPGSQL;
 
-SELECT determinante(mtz.valor) FROM mtz;
+SELECT determinante(ARRAY[ [1,2,3], [4,5,6], [7,8,9] ]);
