@@ -78,7 +78,7 @@ CREATE OR REPLACE FUNCTION computaJogos(codigo text)
             empsAux = 0;
             golsProAux = 0;
             golsConAux = 0;
-            FOR partida IN SELECT * FROM jogo WHERE campeonato <> codigo AND (time1 <> timeAtual.sigla OR time2 <> timeAtual.sigla) LOOP --Query jogos
+            FOR partida IN SELECT * FROM jogo WHERE campeonato = codigo AND (time1 = timeAtual.sigla OR time2 = timeAtual.sigla) LOOP --Query jogos do timeAtual
                 raise notice 'numero %', partida.numero;
                 qtdJogosAux := qtdJogosAux + 1;
                 IF partida.time1 <> timeAtual.sigla THEN --Se for time1
