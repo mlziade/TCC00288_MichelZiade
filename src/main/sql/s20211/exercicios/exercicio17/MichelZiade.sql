@@ -1,3 +1,8 @@
+DO $$ BEGIN
+    PERFORM drop_functions();
+    PERFORM drop_tables();
+END $$;
+
 drop table if exists produto cascade;
 CREATE TABLE produto (
     codigo character varying NOT NULL,

@@ -1,3 +1,8 @@
+DO $$ BEGIN
+    PERFORM drop_functions();
+    PERFORM drop_tables();
+END $$;
+
 drop table if exists cliente cascade;
 create table cliente(
     id bigint primary key,
