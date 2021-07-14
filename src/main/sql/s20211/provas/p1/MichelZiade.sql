@@ -134,7 +134,7 @@ CREATE OR REPLACE FUNCTION formata(pergunta_ int, respostas int[], totalResposta
         respostaFinal float[];
     BEGIN
         FOR i IN 1.. totalRespostas LOOP
-            respostaFinal[i] = respostas[i]/totalRespostas;
+            respostaFinal[i] = respostas[i]/(totalRespostas::float);
         END LOOP;
         RETURN respostaFinal;
     END;
@@ -154,13 +154,10 @@ RETURNS TABLE(pergunta_ int, histograma float[])AS $$
         escolhaAtual RECORD;
     BEGIN
         FOR perguntaAtual IN perguntas LOOP
-            raise notice 'pergunta %', perguntaAtual.numero;
             SELECT COUNT(*) FROM resposta WHERE pesquisa = p_pesquisa AND pergunta = perguntaAtual.numero INTO qtdRespostas;
-            raise notice 'qtdRespostas %', qtdRespostas;
-            SELECT array_fill(0, ARRAY[0, qtdRespostas]) INTO respsPerguntaAux;
-            FOR escolhaAtual IN (SELECT * FROM escolha WHERE pesquisa = p_pesquisa AND pergunta = perguntaAtual.numero AND entrevista IN (SELECT numero FROM entrevista WHERE bairro IN (SELECT numero FROM bairro WHERE nome = ANY(p_bairros)))) LOOP
-                raise notice 'escolha %' escolhaAtual.resposta;
-                respsPerguntaAux[escolhaAtual.resposta] := respsPerguntaAux[escolhaAtual.resposta] + escolhaAtual.resposta;
+            SELECT array_fill(0, ARRAY[qtdRespostas]) INTO respsPerguntaAux;
+            FOR escolhaAtual IN SELECT * FROM escolha WHERE pesquisa = p_pesquisa AND pergunta = perguntaAtual.numero LOOP /*AND entrevista IN (SELECT numero FROM entrevista WHERE bairro IN (SELECT numero FROM bairro WHERE nome = ANY(p_bairros)))) LOOP */
+                respsPerguntaAux[escolhaAtual.resposta] := respsPerguntaAux[escolhaAtual.resposta] + 1;
             END LOOP;
             RETURN QUERY SELECT perguntaAtual.numero, formata(perguntaAtual.numero, respsPerguntaAux, qtdRespostas);
         END LOOP;
