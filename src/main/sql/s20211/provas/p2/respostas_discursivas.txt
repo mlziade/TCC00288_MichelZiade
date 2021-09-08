@@ -1,0 +1,18 @@
+Respostas discursivas - P2 - Banco de Dados 2 - 2021.1
+Michel Ziade
+
+Questão 1 - Uma transação é uma unidade de sequências de operações processadas em um SGBD, unidade pois ou todas as operações são processadas, ou nenhuma delas.
+As transações podem ser tanto apenas de leitura como leitura-escrita e podem ser compostas de um ou mais comandos SQL.
+
+Questão 2 - Existem 4 propriedades que um SGBD garante as transações, que formam a sigla ACID.
+Atomicidade: é a ideia de que transações são unidades indivisíveis, ou seja, que elas devem ser executadas por completo ou não executadas de maneira alguma.
+Consistência: garante a consistência do banco de dados após a execução de uma transação, respeitando os triggers, cascades, constraints e regras do SGBD.
+Isolamento: conjunto de técnicas que garantem que transações devem ser executadas isoladamente, impedindo que transações paralelas interfiram entre si.
+Durabilidade: propriedade que garante que transações efetuadas no SGBD devem permanecer válidas após a conclusão.
+
+Questão 3 - O plano de execução concorrente é uma solução para manter o isolamento do SGBD, ela se utiliza do subsistema de controle de concorrência (ou scheduler) para executar transações de forma concorrente.
+
+Questão 5 - Serialização por ordenação de timestamp. Quando uma transação é recebida pelo SGBD, uma timestamp é atribuída a ela como um identificador. Transações devem então ser executadas pelo SGBD na ordem de menor para maior timestamp, a mesma ordem em que eles chegaram.
+Uma vantagem da ordenação por timestamp é a prevenção de deadlocks, através do Wait-die e Wound-wait.
+No wait-die quando uma transação que chegou antes tenta acessar um elemento do SGBD que uma transação que chegou depois está acessando, ela espera. Mas quando uma transação que chegou depois tenta acessar um elemento que uma transação que chegou antes está acessando, ela morre.
+Já no wound-wait quando uma transação que chegou antes tenta acessar um elemento do SGBD que uma transação que chegou depois está acessando, ela é colocada em espera porém com o mesmo timestamp. Mas quando uma transação que chegou depois tenta acessar um elemento que uma transação que chegou antes está acessando, ela espera.
